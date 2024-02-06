@@ -1,0 +1,232 @@
+[TITLE]
+;;Project Title/Notes
+
+[OPTIONS]
+;;Option             Value
+FLOW_UNITS           CMS
+INFILTRATION         HORTON
+FLOW_ROUTING         DYNWAVE
+LINK_OFFSETS         DEPTH
+MIN_SLOPE            0
+ALLOW_PONDING        NO
+SKIP_STEADY_STATE    NO
+
+START_DATE           02/05/2024
+START_TIME           00:00:00
+REPORT_START_DATE    02/05/2024
+REPORT_START_TIME    00:00:00
+END_DATE             02/16/2024
+END_TIME             23:00:00
+SWEEP_START          01/01
+SWEEP_END            12/31
+DRY_DAYS             0
+REPORT_STEP          00:05:00
+WET_STEP             00:05:00
+DRY_STEP             01:00:00
+ROUTING_STEP         0:00:30 
+RULE_STEP            00:00:00
+
+INERTIAL_DAMPING     PARTIAL
+NORMAL_FLOW_LIMITED  BOTH
+FORCE_MAIN_EQUATION  H-W
+VARIABLE_STEP        0.75
+LENGTHENING_STEP     0
+MIN_SURFAREA         1.167
+MAX_TRIALS           8
+HEAD_TOLERANCE       0.0015
+SYS_FLOW_TOL         5
+LAT_FLOW_TOL         5
+MINIMUM_STEP         0.5
+THREADS              1
+
+[EVAPORATION]
+;;Data Source    Parameters
+;;-------------- ----------------
+CONSTANT         0.0
+DRY_ONLY         NO
+
+[JUNCTIONS]
+;;Name           Elevation  MaxDepth   InitDepth  SurDepth   Aponded   
+;;-------------- ---------- ---------- ---------- ---------- ----------
+1                -1.95      0          0          0          0         
+2                -1.901     0          0          0          0         
+3                -1.839     0          0          0          0         
+4                -1.806     0          0          0          0         
+5                -1.744     0          0          0          0         
+6                -1.687     0          0          0          0         
+7                -1.649     0          0          0          0         
+8                -1.587     0          0          0          0         
+9                -1.524     0          0          0          0         
+10               -1.482     0          0          0          0         
+11               -1.419     0          0          0          0         
+12               -1.353     0          0          0          0         
+13               -1.305     0          0          0          0         
+14               -1.243     0          0          0          0         
+15               -1.171     0          0          0          0         
+16               -1.119     0          0          0          0         
+17               -1.047     0          0          0          0         
+18               -0.981     0          0          0          0         
+19               -0.923     0          0          0          0         
+21               0          0          0          0          0         
+
+[OUTFALLS]
+;;Name           Elevation  Type       Stage Data       Gated    Route To        
+;;-------------- ---------- ---------- ---------------- -------- ----------------
+Out              0          FREE                        NO                       
+
+[STORAGE]
+;;Name           Elev.    MaxDepth   InitDepth  Shape      Curve Type/Params            SurDepth  Fevap    Psi      Ksat     IMD     
+;;-------------- -------- ---------- ----------- ---------- ---------------------------- --------- --------          -------- --------
+WSTJC            -3.00    2.5        0          FUNCTIONAL 0          0          36       0         0       
+SOURCE           -4       10         9          FUNCTIONAL 0          0          10000    0         0       
+20               -3.000   2.5        0          FUNCTIONAL 0          0          1.04     0         0       
+WSMDC            -3       2.5        0          FUNCTIONAL 0          0          7.705    0         0       
+
+[CONDUITS]
+;;Name           From Node        To Node          Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow   
+;;-------------- ---------------- ---------------- ---------- ---------- ---------- ---------- ---------- ----------
+1                19               18               14.30      0.009      0          0          0          0         
+2                18               17               16.675     0.009      0          0          0          0         
+3                17               16               17.95      0.009      0          0          0          0         
+4                16               15               13.1       0.009      0          0          0          0         
+5                15               14               17.95      0.009      0          0          0          0         
+6                14               13               15.475     0.009      0          0          0          0         
+7                13               12               11.9       0.009      0          0          0          0         
+8                12               11               16.575     0.009      0          0          0          0         
+9                11               10               15.650     0.009      0          0          0          0         
+10               10               9                10.7       0.009      0          0          0          0         
+11               9                8                15.65      0.009      0          0          0          0         
+12               8                7                15.375     0.009      0          0          0          0         
+13               7                6                9.500      0.009      0          0          0          0         
+14               6                5                14.275     0.009      0          0          0          0         
+15               5                4                15.550     0.009      0          0          0          0         
+16               4                3                8.300      0.009      0          0          0          0         
+17               3                2                15.550     0.009      0          0          0          0         
+18               2                1                12.195     0.009      0          0          0          0         
+outpipe          1                20               1.00       0.009      0          0          0          0         
+19               21               WSTJC            4          0.012      0          0          0          0         
+
+[PUMPS]
+;;Name           From Node        To Node          Pump Curve       Status   Sartup Shutoff 
+;;-------------- ---------------- ---------------- ---------------- ------ -------- --------
+WS1              WSTJC            19               PUMP_WS1         ON       0        0       
+WS2              WSTJC            19               PUMP_WS2         ON       0        0       
+WS3              WSTJC            19               PUMP_WS3         ON       0        0       
+out_pump         SOURCE           WSTJC            PUMP_IN          ON       0        0       
+21               WSMDC            21               PUMP_OUT         ON       0        0       
+
+[ORIFICES]
+;;Name           From Node        To Node          Type         Offset     Qcoeff     Gated    CloseTime 
+;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- ----------
+20               21               Out              SIDE         0          0.65       NO       0         
+
+[WEIRS]
+;;Name           From Node        To Node          Type         CrestHt    Qcoeff     Gated    EndCon   EndCoeff   Surcharge  RoadWidth  RoadSurf   Coeff. Curve
+;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- -------- ---------- ---------- ---------- ---------- ----------------
+weir1            20               WSMDC            TRANSVERSE   1.05       3.33       NO       0        0          YES       
+
+[XSECTIONS]
+;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels    Culvert   
+;;-------------- ------------ ---------------- ---------- ---------- ---------- ---------- ----------
+1                CIRCULAR     0.4              0          0          0          1                    
+2                CIRCULAR     0.4              0          0          0          1                    
+3                CIRCULAR     0.4              0          0          0          1                    
+4                CIRCULAR     0.4              0          0          0          1                    
+5                CIRCULAR     0.4              0          0          0          1                    
+6                CIRCULAR     0.4              0          0          0          1                    
+7                CIRCULAR     0.5              0          0          0          1                    
+8                CIRCULAR     0.4              0          0          0          1                    
+9                CIRCULAR     0.4              0          0          0          1                    
+10               CIRCULAR     0.4              0          0          0          1                    
+11               CIRCULAR     0.4              0          0          0          1                    
+12               CIRCULAR     0.4              0          0          0          1                    
+13               CIRCULAR     0.4              0          0          0          1                    
+14               CIRCULAR     0.5              0          0          0          1                    
+15               CIRCULAR     0.5              0          0          0          1                    
+16               CIRCULAR     0.5              0          0          0          1                    
+17               CIRCULAR     0.5              0          0          0          1                    
+18               CIRCULAR     0.5              0          0          0          1                    
+outpipe          CIRCULAR     500              0          0          0          1                    
+19               FORCE_MAIN   0.2              100        0          0          1                    
+20               CIRCULAR     1                0          0          0
+weir1            RECT_OPEN    0.5              0.8        0          0         
+
+[CURVES]
+;;Name           Type       X-Value    Y-Value   
+;;-------------- ---------- ---------- ----------
+PUMP_WS1         Pump2      0.1        0.0166667 
+PUMP_WS1                    3          0.0166667 
+PUMP_WS1                    10         0.0166667 
+;
+PUMP_WS2         Pump2      0.1        0.0166667 
+PUMP_WS2                    3          0.0166667 
+PUMP_WS2                    10         0.0166667 
+;
+PUMP_WS3         Pump2      0.1        0.01388889
+PUMP_WS3                    3          0.01388889
+PUMP_WS3                    10         0.01388889
+;
+PUMP_IN          Pump2      0.1        0.0277778 
+PUMP_IN                     3          0.0277778 
+PUMP_IN                     10         0.0277778 
+;
+PUMP_OUT         Pump2      0.1        0.0277778 
+PUMP_OUT                    3          0.0277778 
+PUMP_OUT                    10         0.0277778 
+
+[REPORT]
+;;Reporting Options
+SUBCATCHMENTS ALL
+NODES ALL
+LINKS ALL
+
+[TAGS]
+
+[MAP]
+DIMENSIONS -6.334 -8.978 10000.000 10000.000
+Units      None
+
+[COORDINATES]
+;;Node           X-Coord            Y-Coord           
+;;-------------- ------------------ ------------------
+1                0.000              0.000             
+2                12.195             0.000             
+3                27.745             0.000             
+4                27.745             8.300             
+5                12.195             8.300             
+6                -2.080             8.300             
+7                -2.080             -1.200            
+8                13.295             -1.200            
+9                28.945             -1.200            
+10               28.945             9.500             
+11               13.295             9.500             
+12               -3.280             9.500             
+13               -3.280             -2.400            
+14               12.195             -2.400            
+15               30.145             -2.400            
+16               30.145             10.700            
+17               12.195             10.700            
+18               -4.480             10.700            
+19               -4.480             -3.600            
+21               7.179              2.664             
+Out              12.721             2.950             
+WSTJC            -4.597             -8.041            
+SOURCE           8.915              -7.946            
+20               -0.006             2.617             
+WSMDC            2.777              2.617             
+
+[VERTICES]
+;;Link           X-Coord            Y-Coord           
+;;-------------- ------------------ ------------------
+19               7.321              -3.997            
+WS1              -6.072             -5.733            
+WS3              -3.360             -5.400            
+
+[Polygons]
+;;Storage Node   X-Coord            Y-Coord           
+;;-------------- ------------------ ------------------
+WSTJC            -4.597             -8.041            
+SOURCE           8.915              -7.946            
+20               -0.006             2.617             
+WSMDC            2.777              2.617             
+
