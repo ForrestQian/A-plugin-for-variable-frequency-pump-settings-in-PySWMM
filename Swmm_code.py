@@ -14,7 +14,7 @@ def movefile(srcfile, dstpath):  # 移动函数
         shutil.move(srcfile, dstpath + fname)  # 移动文件
         print("move %s -> %s" % (srcfile, dstpath + fname))
 
-def swmm_write(time_step, start, end, in_filename, out_filename, pump_1, pump_2, pump_3, pump_in, pump_out):
+def swmm_write(time_step, start, end, in_filename, out_filename, pump_1, pump_2, pump_3, pump_in, pump_out, inner_loop):
     start_date = start.date()
     end_date = end.date()
     # 设置模拟的起始和终止时刻
@@ -34,12 +34,18 @@ def swmm_write(time_step, start, end, in_filename, out_filename, pump_1, pump_2,
     inp['OPTIONS']['END_DATE'] = end_date
     inp['OPTIONS']['END_TIME'] = end_time
     inp['OPTIONS']['REPORT_STEP'] = report_step
+    if inner_loop == 0:
+        inp['CONDUITS']['19'].to_node = 'Out'
+    else:
+        inp['CONDUITS']['19'].to_node = 'WSTJC'
+        pump_in = 0.0
     for i in range(3):
         inp['CURVES']['PUMP_WS1'].points[i][1] = pump_1
         inp['CURVES']['PUMP_WS2'].points[i][1] = pump_2
         inp['CURVES']['PUMP_WS3'].points[i][1] = pump_3
         inp['CURVES']['PUMP_IN'].points[i][1] = pump_in
         inp['CURVES']['PUMP_OUT'].points[i][1] = pump_out
+
     inp.write_file(str(out_filename))
 
 def swmm_run(data, time_set, step_hour, time_step, in_file):
@@ -50,10 +56,11 @@ def swmm_run(data, time_set, step_hour, time_step, in_file):
             start_time = end_time
         end_time = start_time + timedelta(hours=step_hour)
         pump_in = data.loc[j, 'PUMP_IN'] / 3600
-        pump_out = pump_in
+        pump_out = data.loc[j, 'PUMP_OUT'] / 3600
         pump_1 = data.loc[j, 'PUMP_1'] / 3600
         pump_2 = data.loc[j, 'PUMP_2'] / 3600
         pump_3 = data.loc[j, 'PUMP_3'] / 3600
+        inner_loop = int(data.loc[j, 'Inner_loop'])
         change_file = str('./swmm_inp/') + start_time.strftime('%Y-%m-%d_%H-%M-%S') + str('.inp')
         changed_file = str('./swmm_inp/') + end_time.strftime('%Y-%m-%d_%H-%M-%S') + str('.inp')
         in_hsf_file = str('./swmm_hsf/') + start_time.strftime('%Y-%m-%d_%H-%M-%S') + str('.hsf')
@@ -63,14 +70,16 @@ def swmm_run(data, time_set, step_hour, time_step, in_file):
         if j == 0:
             change_file = in_file
         swmm_write(time_step=time_step, start=start_time, end=end_time, in_filename=change_file, out_filename=changed_file,
-                   pump_1=pump_1, pump_2=pump_2, pump_3=pump_3, pump_out=pump_out, pump_in=pump_in)
+                   pump_1=pump_1, pump_2=pump_2, pump_3=pump_3, pump_out=pump_out, pump_in=pump_in, inner_loop=inner_loop)
         with pm.Simulation(changed_file) as sim:
             if j == 0:
                 in_hsf_file = None
             else:
                 sim.use_hotstart(in_hsf_file)
             for step in sim:
-                sim.save_hotstart(out_hsf_file)
+                while step.getCurrentSimulationTime() > end_time - timedelta(seconds=30):
+                    sim.save_hotstart(out_hsf_file)
+                    break
             sim.close()
         srcfile = changed_file.replace('.inp', '.out')
         dst_dir = out_file
